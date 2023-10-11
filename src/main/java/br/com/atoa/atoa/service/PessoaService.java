@@ -5,6 +5,7 @@ import br.com.atoa.atoa.domain.Pessoa;
 import br.com.atoa.atoa.dto.request.PessoaDto;
 import br.com.atoa.atoa.dto.response.DadosDtoResponse;
 import br.com.atoa.atoa.dto.response.EnderecoDtoResponse;
+import br.com.atoa.atoa.dto.response.ListDadosDtoResponse;
 import br.com.atoa.atoa.dto.response.PessoaDtoRespose;
 import br.com.atoa.atoa.mapper.PessoaMapper;
 import br.com.atoa.atoa.repository.EnderecoRepository;
@@ -13,8 +14,7 @@ import br.com.atoa.atoa.utils.PesquisaEnderecoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PessoaService {
@@ -83,5 +83,18 @@ public class PessoaService {
     private Pessoa conversePessoa(Optional<Pessoa> pessoa) {
         Pessoa ps = pessoa.get();
         return ps;
+    }
+
+    public ListDadosDtoResponse buscarListaPessoa(String nome) {
+        ListDadosDtoResponse listaDto = new ListDadosDtoResponse();
+        if (Objects.nonNull(nome)){
+            List<Pessoa> listPessoa = pessoaRepositry.findAllByNome(nome);
+            listPessoa.forEach( pessoa -> {
+                List<PessoaDtoRespose> dto = pessoaMapper.mapearPessoaParaDto(pessoa);
+                listaDto.setPessoa(dto);
+            });
+            return listaDto;
+        }
+        return null;
     }
 }
